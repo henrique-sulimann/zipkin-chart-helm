@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "zipkin.fullname" . }}
+  labels:
+    {{- include "zipkin.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.ui.service.type }}
+  ports:
+    - port: {{ .Values.ui.service.port }}
+      targetPort: {{ .Values.ui.service.targetPort }}
+      protocol: {{ .Values.ui.service.protocol }}
+      name: {{ .Values.ui.service.name }}
+  selector:
+    {{- include "zipkin.selectorLabels" . | nindent 4 }}
