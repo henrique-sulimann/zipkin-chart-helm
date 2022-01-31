@@ -1,6 +1,6 @@
 {{- if .Values.collector.ingress.enabled -}}
 {{- $fullName := include "zipkin.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
+{{- $svcPort := .Values.collector.service.port -}}
 {{- if and .Values.collector.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.collector.ingress.annotations "kubernetes.io/ingress.class") }}
   {{- $_ := set .Values.collector.ingress.annotations "kubernetes.io/ingress.class" .Values.collector.ingress.className}}
