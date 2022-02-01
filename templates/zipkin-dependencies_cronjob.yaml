@@ -20,22 +20,21 @@ spec:
           restartPolicy: Never
           serviceAccountName: {{ include "zipkin.dependencies.serviceAccountName" . }}
           containers:
-            - name: {{ .Chart.Name }}-dependencies
+            - name: {{ include "zipkin.dependencies.fullname" . }}
               image: "{{ .Values.dependencies.image.repository }}:{{ .Values.dependencies.image.tag }}"
               imagePullPolicy: {{ .Values.dependencies.image.pullPolicy }}
               resources:
-                {{- toYaml .Values.collector.resources | nindent 16 }}
-          {{- with .Values.collector.nodeSelector }}
+                {{- toYaml .Values.dependencies.resources | nindent 16 }}
+          {{- with .Values.dependencies.nodeSelector }}
           nodeSelector:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-        {{- with .Values.collector.affinity }}
+        {{- with .Values.dependencies.affinity }}
           affinity:
             {{- toYaml . | nindent 12 }}
         {{- end }}
-        {{- with .Values.collector.tolerations }}
+        {{- with .Values.dependencies.tolerations }}
           tolerations:
             {{- toYaml . | nindent 12 }}
         {{- end }}
-
 {{- end -}}

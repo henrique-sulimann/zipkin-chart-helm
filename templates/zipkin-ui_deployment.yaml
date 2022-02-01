@@ -26,7 +26,7 @@ spec:
           configMap:
             name: {{ include "zipkin.ui.fullname" . }}
       containers:
-        - name: {{ include "zipkin.collector.fullname" . }}-ui
+        - name: {{ include "zipkin.ui.fullname" . }}-ui
           image: "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.ui.image.pullPolicy }}
           volumeMounts:
@@ -35,7 +35,7 @@ spec:
               subPath: zipkin.conf.template
           env:
             - name: ZIPKIN_BASE_URL
-              value: {{ include "zipkin.collector.service.uri" . | quote }}
+              value: {{ include "zipkin.ui.service.uri" . | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.ui.service.port }}
