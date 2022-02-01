@@ -38,7 +38,7 @@ spec:
               value: {{ include "zipkin.collector.service.uri" . | quote }}
           ports:
             - name: http
-              containerPort: {{ .Values.ui.service.targetPort }}
+              containerPort: {{ .Values.ui.service.port }}
               protocol: TCP
           livenessProbe:
             httpGet:

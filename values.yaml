@@ -4,6 +4,7 @@ nameOverride: ""
 fullnameOverride: "zipkin"
 
 collector:
+  replicaCount: 1
   image:
     repository: openzipkin/zipkin
     tag:  # defaults to Chart.AppVersion unless this is set
@@ -67,15 +68,16 @@ collector:
     targetCPUUtilizationPercentage: 80
 
 ui:
+  replicaCount: 1
   image:
     repository: openzipkin/zipkin-ui
     tag:  # defaults to Chart.AppVersion unless this is set
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
-    port: 9090
-    targetPort: 8080
-    name: "zipkin"
+    port: 8080
+    targetPort: http
+    name: http
     protocol: TCP
   ingress:
     enabled: false
