@@ -19,18 +19,18 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       serviceAccountName: {{ include "zipkin.ui.serviceAccountName" . }}
-      # volumes:
-      #   - name: config
-      #     configMap:
-      #       name: {{ include "zipkin.ui.fullname" . }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "zipkin.ui.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}-ui
           image: "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.ui.image.pullPolicy }}
-          # volumeMounts:
-          #   - name: config
-          #     mountPath: /etc/nginx/conf.d/zipkin.conf.template
-          #     subPath: zipkin.conf.template
+          volumeMounts:
+            - name: config
+              mountPath: /etc/nginx/conf.d/zipkin.conf.template
+              subPath: zipkin.conf.template
           env:
             - name: ZIPKIN_BASE_URL
               value: {{ include "zipkin.collector.service.uri" . | quote }}

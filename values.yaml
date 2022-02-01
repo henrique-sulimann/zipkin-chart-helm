@@ -7,7 +7,7 @@ collector:
   replicaCount: 1
   image:
     repository: openzipkin/zipkin
-    tag:  # defaults to Chart.AppVersion unless this is set
+    tag: "2.21.0" # defaults to Chart.AppVersion unless this is set
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -71,7 +71,7 @@ ui:
   replicaCount: 1
   image:
     repository: openzipkin/zipkin-ui
-    tag:  # defaults to Chart.AppVersion unless this is set
+    tag: "2.21.0" # defaults to Chart.AppVersion unless this is set
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
