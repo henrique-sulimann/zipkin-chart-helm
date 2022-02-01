@@ -27,13 +27,13 @@ spec:
           imagePullPolicy: {{ .Values.collector.image.pullPolicy }}
           env:
             - name: QUERY_PORT
-              value: {{ .Values.collector.service.targetPort | quote }}
+              value: {{ .Values.collector.service.port | quote }}
             {{- range .Values.collector.env }}
             - {{ . | toYaml }}
             {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.collector.service.targetPort }}
+              containerPort: {{ .Values.collector.service.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
