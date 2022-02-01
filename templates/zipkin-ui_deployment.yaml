@@ -35,7 +35,7 @@ spec:
               subPath: zipkin.conf.template
           env:
             - name: ZIPKIN_BASE_URL
-              value: {{ include "zipkin.ui.service.uri" . | quote }}
+              value: {{ include "zipkin.collector.service.uri" . | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.ui.service.port }}
