@@ -44,7 +44,7 @@ data:
         }
 
         server {
-            listen {{ .Values.ui.service.port }};
+            listen {{ .Values.ui.service.targetPort }};
 
             root /var/www/html;
 

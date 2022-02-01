@@ -130,7 +130,7 @@ ui:
     targetCPUUtilizationPercentage: 80
 
 dependencies:
-  enabled: false
+  enabled: true
 
   cron: "* 0 * * *"
 
