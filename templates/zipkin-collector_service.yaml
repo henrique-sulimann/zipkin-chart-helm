@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "zipkin.fullname" . }}-collector
+  name: {{ include "zipkin.collector.fullname" . }}
   labels:
     {{- include "zipkin.labels" . | nindent 4 }}
 spec:
