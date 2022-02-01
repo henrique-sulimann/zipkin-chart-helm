@@ -1,18 +1,7 @@
-# Default values for zipkin.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 1
-
-image:
-  repository: nginx
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
 
 imagePullSecrets: []
 nameOverride: ""
-fullnameOverride: ""
+fullnameOverride: "zipkin"
 
 collector:
   image:
@@ -21,9 +10,9 @@ collector:
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
-    port: 80
-    targetPort: 8080
-    name: "zipkin"
+    port: 9411
+    targetPort: 9411
+    name: "http"
     protocol: TCP
   ingress:
     enabled: false
@@ -84,7 +73,7 @@ ui:
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
-    port: 80
+    port: 9090
     targetPort: 8080
     name: "zipkin"
     protocol: TCP

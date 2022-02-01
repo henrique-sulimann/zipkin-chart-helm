@@ -22,18 +22,18 @@ spec:
     {{- end }}
       serviceAccountName: {{ include "zipkin.collector.serviceAccountName" . }}
       containers:
-        - name: {{ include "zipkin.collector.fullname" . }}-collector
+        - name: {{ include "zipkin.collector.fullname" . }}
           image: "{{ .Values.collector.image.repository }}:{{ .Values.collector.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.collector.image.pullPolicy }}
           env:
             - name: QUERY_PORT
-              value: {{ .Values.collector.service.port | quote }}
+              value: {{ .Values.collector.service.targetPort | quote }}
             {{- range .Values.collector.env }}
             - {{ . | toYaml }}
             {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.collector.service.port }}
+              containerPort: {{ .Values.collector.service.targetPort }}
               protocol: TCP
           livenessProbe:
             httpGet:
