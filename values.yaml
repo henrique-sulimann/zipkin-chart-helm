@@ -12,8 +12,8 @@ collector:
   service:
     type: ClusterIP
     port: 9411
-    targetPort: 9411
-    name: "http"
+    targetPort: http
+    name: http
     protocol: TCP
   ingress:
     enabled: false
