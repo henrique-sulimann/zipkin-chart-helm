@@ -1,3 +1,4 @@
+{{- if not .Values.collector.statefulset.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5,9 +6,7 @@ metadata:
   labels:
     {{- include "zipkin.collector.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.collector.autoscaling.enabled }}
   replicas: {{ .Values.collector.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "zipkin.collector.selectorLabels" . | nindent 6 }}
@@ -22,7 +21,7 @@ spec:
     {{- end }}
       serviceAccountName: {{ include "zipkin.collector.serviceAccountName" . }}
       containers:
-        - name: {{ include "zipkin.collector.fullname" . }}
+        - name: {{ .Chart.Name }}-collector
           image: "{{ .Values.collector.image.repository }}:{{ .Values.collector.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.collector.image.pullPolicy }}
           env:
@@ -33,7 +32,7 @@ spec:
             {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.collector.service.port | int }}
+              containerPort: {{ .Values.collector.service.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
@@ -57,3 +56,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+{{- end }}

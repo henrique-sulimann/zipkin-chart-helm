@@ -1,0 +1,21 @@
+{{- if and .Values.collector.persistentVolume.enabled (not .Values.collector.persistentVolume.existingClaim) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    {{- include "zipkin.collector.labels" . | nindent 4 }}
+  name: {{ include "zipkin.collector.fullname" . }}
+spec:
+  accessModes:
+    - {{ .Values.collector.persistentVolume.accessMode }}
+  {{- if .Values.collector.persistentVolume.storageClass }}
+    {{- if (eq "-" .Values.collector.persistentVolume.storageClass) }}
+  storageClassName: ""
+    {{- else }}
+  storageClassName: "{{ .Values.collector.persistentVolume.storageClass }}"
+    {{- end }}
+  {{- end }}
+  resources:
+    requests:
+      storage: "{{ .Values.collector.persistentVolume.size }}"
+{{- end }}

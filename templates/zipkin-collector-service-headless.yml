@@ -1,0 +1,18 @@
+{{- if .Values.collector.statefulset.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "zipkin.collector.fullname" . }}-headless
+  labels:
+    {{- include "zipkin.collector.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  ports:
+  {{- range $key, $value := .Values.collector.service.ports }}
+    - name: {{ $key }}
+      targetPort: {{ $key }}
+{{ toYaml $value | indent 6 }}
+  {{- end }}
+  selector:
+    {{- include "zipkin.collector.selectorLabels" . | nindent 4 }}
+{{- end -}}

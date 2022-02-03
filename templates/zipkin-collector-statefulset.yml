@@ -1,0 +1,78 @@
+{{- if .Values.collector.statefulset.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "zipkin.collector.fullname" . }}
+  labels:
+    {{- include "zipkin.collector.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "zipkin.collector.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "zipkin.collector.fullname" . }}-headless
+  # strategy: {{ .Values.collector.strategy }}
+  replicas: {{ .Values.collector.replicaCount }}
+  template:
+    metadata:
+      labels:
+        {{- include "zipkin.collector.labels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: {{ include "zipkin.collector.fullname" . }}
+          image: "{{ .Values.collector.image.repository }}:{{ .Values.collector.image.tag | default .Chart.AppVersion }}"
+          {{- if .Values.envs }}
+          env:
+          {{- range .Values.envs }}
+            - name: {{ .name | quote }}
+              value: {{ .value | quote }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.commands }}
+          command:
+          {{- range .Values.commands}}
+            - {{ . }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.args }}
+          args:
+          {{- range .Values.args}}
+            - {{ . }}
+          {{- end }}
+          {{- end }}
+          ports:
+          {{- range .Values.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              protocol: {{ .protocol }}
+          {{- end }}
+          {{- if and .Values.collector.persistentVolume.enabled (not .Values.collector.persistentVolume.existingClaim) }}
+          volumeMounts:
+            - name: data-storage
+              mountPath: /usr/share/nginx/html
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      volumes:
+      {{- if and .Values.collector.persistentVolume.enabled (not .Values.collector.persistentVolume.existingClaim) }}
+        - name: data-storage
+          persistentVolumeClaim:
+            claimName: {{ include "zipkin.collector.fullname" . }}-pvc
+      {{- end }}
+{{- end }}

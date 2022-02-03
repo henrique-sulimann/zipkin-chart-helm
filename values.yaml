@@ -2,8 +2,19 @@
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: "zipkin"
-
+envs: 
+  - name: QUERY_PORT
+    value: 9411
+commands: []
+args: []
+ports: 
+  - name: http
+    containerPort: 9411
+    protocol: TCP
 collector:
+  statefulset:
+    enabled: true
+  strategy: RollingUpdate
   replicaCount: 1
   image:
     repository: openzipkin/zipkin
@@ -16,7 +27,7 @@ collector:
     name: http
     protocol: TCP
   ingress:
-    enabled: false
+    enabled: true
     className: ""
     annotations: {}
       # kubernetes.io/ingress.class: nginx
@@ -66,6 +77,27 @@ collector:
     minReplicas: 1
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
+  persistentVolume:   # 是否存储持久化
+    enabled: true
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, azure-disk on
+    ##   Azure, standard on GKE, AWS & OpenStack)
+    ##
+    storageClass: "-"
+    accessMode: ReadWriteOnce
+    annotations: {}
+    #   helm.sh/resource-policy: keep
+    size: 1Gi  # 大小
+    existingClaim: {}  # 使用已存在的pvc
+    mountPaths: []
+    #  - name: config
+    #    mountPath: /config
+    #    subPath: config
+    #  - name: data-storage
+    #    mountPath: /data
+    #    subPath: data
 
 ui:
   replicaCount: 1
@@ -80,7 +112,7 @@ ui:
     name: http
     protocol: TCP
   ingress:
-    enabled: false
+    enabled: true
     className: ""
     annotations: {}
       # kubernetes.io/ingress.class: nginx
@@ -132,13 +164,20 @@ ui:
     targetCPUUtilizationPercentage: 80
 
 dependencies:
+  elasticsearch:
+    # if enabled set "false", fill the connection informations in "external" section
+    enabled: true
+    ## 使用外部ES或者使用其它存储方式，以下为环境变量定义
+    external:
+      STORAGE_TYPE: "elasticsearch"
+      ES_HOSTS: "elasticsearch-client.devops:9200"
   enabled: true
 
   cron: "* 0 * * *"
 
   image:
     repository: openzipkin/zipkin-dependencies
-    tag: "2.4.1"
+    tag: "2.6.4"
     pullPolicy: IfNotPresent
 
   serviceAccount:
